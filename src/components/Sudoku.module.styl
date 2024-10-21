@@ -1,0 +1,82 @@
+.container
+  display: flex
+  flex-direction: column
+  align-items: center
+  padding: 20px
+  max-width: 500px
+  margin: 0 auto
+
+.gameInfo
+  display: flex
+  justify-content: space-between
+  width: 100%
+  margin-bottom: 10px
+  font-size: 14px
+
+.board
+  display: grid
+  grid-template-columns: repeat(9, 1fr)
+  gap: 1px
+  background-color: #bbb
+  border: 2px solid #999
+  margin-bottom: 20px
+
+.cell
+  width: 40px
+  height: 40px
+  display: flex
+  align-items: center
+  justify-content: center
+  background-color: white
+  font-size: 20px
+  font-weight: bold
+  cursor: pointer
+
+  &.highlighted
+    background-color: #e6f3ff
+
+  &.selected
+    background-color: #bbdefb
+
+  &.empty
+    color: #4a90e2
+
+  &.filled
+    color: #333
+
+  &.rightBorder
+    border-right: 2px solid #999
+
+  &.bottomBorder
+    border-bottom: 2px solid #999
+
+.actions
+  display: flex
+  justify-content: space-between
+  width: 100%
+  margin-bottom: 20px
+
+.actionButton
+  flex: 1
+  margin: 0 5px
+
+.numbers
+  display: grid
+  grid-template-columns: repeat(3, 1fr)
+  gap: 10px
+  width: 100%
+  margin-bottom: 20px
+
+.numberButton
+  height: 50px
+  font-size: 20px
+
+.newGameButton
+  width: 100%
+  background-color: #4a90e2
+  color: white
+  font-size: 18px
+  padding: 10px 0
+
+  &:hover
+    background-color: #3a78c2
