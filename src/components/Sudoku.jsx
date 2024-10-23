@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button"
+import { Button } from '@/components/ui/button'
 import React, { useEffect, useState } from 'react'
 import styles from './Sudoku.module.styl'
 
@@ -15,7 +15,9 @@ const initialBoard = [
 ]
 
 function Sudoku() {
-    const [board, setBoard] = useState(initialBoard)
+    const [board, setBoard] = useState(initialBoard.map(row =>
+        row.map(cell => ({ value: cell, isInitial: cell !== 0 }))
+    ))
     const [selectedCell, setSelectedCell] = useState(null)
     const [mistakes, setMistakes] = useState(0)
     const [timer, setTimer] = useState(0)
@@ -28,15 +30,30 @@ function Sudoku() {
     }, [])
 
     const handleCellClick = (row, col) => {
-        setSelectedCell({ row, col })
+        if (!board[row][col].isInitial) {
+            setSelectedCell({ row, col })
+        }
     }
 
     const handleNumberInput = (number) => {
         if (selectedCell) {
             const { row, col } = selectedCell
-            const newBoard = [...board]
-            newBoard[row][col] = number
-            setBoard(newBoard)
+            if (!board[row][col].isInitial) {
+                const newBoard = [...board]
+                newBoard[row][col] = { ...newBoard[row][col], value: number }
+                setBoard(newBoard)
+            }
+        }
+    }
+
+    const handleErase = () => {
+        if (selectedCell) {
+            const { row, col } = selectedCell
+            if (!board[row][col].isInitial) {
+                const newBoard = [...board]
+                newBoard[row][col] = { ...newBoard[row][col], value: 0 }
+                setBoard(newBoard)
+            }
         }
     }
 
@@ -71,22 +88,34 @@ function Sudoku() {
                             className={`${styles.cell} 
                 ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? styles.selected : ''}
                 ${isHighlighted(rowIndex, colIndex) ? styles.highlighted : ''}
-                ${cell === 0 ? styles.empty : styles.filled}
+                ${cell.value === 0 ? styles.empty : styles.filled}
+                ${cell.isInitial ? styles.initial : styles.userInput}
                 ${colIndex % 3 === 2 && colIndex !== 8 ? styles.rightBorder : ''}
                 ${rowIndex % 3 === 2 && rowIndex !== 8 ? styles.bottomBorder : ''}`}
                             onClick={() => handleCellClick(rowIndex, colIndex)}
                         >
-                            {cell !== 0 ? cell : ''}
+                            {cell.value !== 0 ? cell.value : ''}
                         </div>
                     ))
                 )}
             </div>
             <div className={styles.actions}>
-                {['Undo', 'Erase', 'Notes', 'Hint'].map((action) => (
-                    <Button key={action} variant="outline" className={styles.actionButton}>
-                        {action}
-                    </Button>
-                ))}
+                <Button variant="outline" className={styles.actionButton}>
+                    Undo
+                </Button>
+                <Button
+                    variant="outline"
+                    className={styles.actionButton}
+                    onClick={handleErase}
+                >
+                    Erase
+                </Button>
+                <Button variant="outline" className={styles.actionButton}>
+                    Notes
+                </Button>
+                <Button variant="outline" className={styles.actionButton}>
+                    Hint
+                </Button>
             </div>
             <div className={styles.numbers}>
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
