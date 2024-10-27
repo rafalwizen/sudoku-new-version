@@ -21,6 +21,7 @@ function Sudoku() {
     const [selectedCell, setSelectedCell] = useState(null)
     const [mistakes, setMistakes] = useState(0)
     const [timer, setTimer] = useState(0)
+    const [history, setHistory] = useState([])  // History of moves
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -39,8 +40,13 @@ function Sudoku() {
         if (selectedCell) {
             const { row, col } = selectedCell
             if (!board[row][col].isInitial) {
-                const newBoard = [...board]
-                newBoard[row][col] = { ...newBoard[row][col], value: number }
+                const newBoard = board.map((r, rowIndex) =>
+                    r.map((c, colIndex) => ({
+                        ...c,
+                        value: rowIndex === row && colIndex === col ? number : c.value
+                    }))
+                )
+                setHistory(prevHistory => [...prevHistory, board])
                 setBoard(newBoard)
             }
         }
@@ -50,10 +56,23 @@ function Sudoku() {
         if (selectedCell) {
             const { row, col } = selectedCell
             if (!board[row][col].isInitial) {
-                const newBoard = [...board]
-                newBoard[row][col] = { ...newBoard[row][col], value: 0 }
+                const newBoard = board.map((r, rowIndex) =>
+                    r.map((c, colIndex) => ({
+                        ...c,
+                        value: rowIndex === row && colIndex === col ? 0 : c.value
+                    }))
+                )
+                setHistory(prevHistory => [...prevHistory, board])
                 setBoard(newBoard)
             }
+        }
+    }
+
+    const handleUndo = () => {
+        if (history.length > 0) {
+            const previousBoard = history[history.length - 1]
+            setBoard(previousBoard)
+            setHistory(history.slice(0, -1))
         }
     }
 
@@ -100,7 +119,11 @@ function Sudoku() {
                 )}
             </div>
             <div className={styles.actions}>
-                <Button variant="outline" className={styles.actionButton}>
+                <Button
+                    variant="outline"
+                    className={styles.actionButton}
+                    onClick={handleUndo}
+                >
                     Undo
                 </Button>
                 <Button
